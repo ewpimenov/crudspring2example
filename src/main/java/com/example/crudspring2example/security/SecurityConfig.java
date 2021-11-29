@@ -21,7 +21,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-    private UserDetailsService userDetailsService;
+   /* private UserDetailsService userDetailsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
-
+*/
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin()   

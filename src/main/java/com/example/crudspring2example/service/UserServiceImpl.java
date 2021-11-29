@@ -1,10 +1,6 @@
 package com.example.crudspring2example.service;
-
-
-
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.repository.UserRepository;
-
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
 
 @Service
 @Transactional
