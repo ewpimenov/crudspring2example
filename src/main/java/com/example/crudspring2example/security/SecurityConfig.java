@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,23 +22,27 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-   /* private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(@Qualifier("userServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        this.userDetailsService = userDetailsService;
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public SecurityConfig(@Qualifier("userServiceImpl") UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
-*/
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()   
+        http.formLogin()
                 // указываем страницу с формой логина
                 .loginPage("/hello")
                 //указываем логику обработки при логине
@@ -57,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // указываем URL логаута
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 // указываем URL при удачном логауте
-                .logoutSuccessUrl("/login.html")
+                .logoutSuccessUrl("/login")
                 //выклчаем кроссдоменную секьюрность (на этапе обучения неважна)
                 .and().csrf().disable();
 
@@ -71,9 +76,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user").access("hasAnyAuthority('ADMIN','USER')")
                 .anyRequest().authenticated();
     }
-
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

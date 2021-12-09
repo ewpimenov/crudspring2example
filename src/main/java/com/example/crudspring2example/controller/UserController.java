@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -18,11 +18,11 @@ public class UserController {
     @GetMapping("/")
     public String hello(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "/listUsers.html";
+        return "/listUsers";
     }
 
     @GetMapping("/user")
     public String userPage() {
-        return "/user.html";
+        return "/user";
     }
 }
