@@ -3,12 +3,16 @@ package com.example.crudspring2example.controller;
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.service.RoleService;
 import com.example.crudspring2example.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @Controller
@@ -29,27 +33,20 @@ public class AdminController {
     }
 
     @GetMapping
-    public String adminPage() {
+    public String adminPage(Model model, Principal principal) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("user", principal.getName());
+        model.addAttribute("roles", authentication.getAuthorities());
+        model.addAttribute("users", userService.getAllUsers());
         return "/admin";
     }
 
-    @GetMapping("/addUser")
-    public String getUserAddForm(@ModelAttribute("user") User user) {
-        return "/addUser";
-    }
-
     @PostMapping("/addUser")
-    public String create(@ModelAttribute("user") User user) {
-        user.setRoles(roleService.getAllRolesByName());
+    public String create(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
+        user.setRoles(roleService.getRolesByName(role));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.addUser(user);
-        return "redirect:/";
-    }
-
-    @GetMapping("/listUsers")
-    public String listAllUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-        return "/listUsers";
+        return "redirect:/admin";
     }
 
     @GetMapping("/updateUser")
@@ -61,6 +58,7 @@ public class AdminController {
 
     @PostMapping("/updateUser")
     public String update(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
+
         user.setRoles(roleService.getRolesByName(role));
         User userFromDB = userService.getUser(user.getId());
         String oldPassword = userFromDB.getPassword();
@@ -69,7 +67,7 @@ public class AdminController {
             userService.updateUser(user);
         }
         userService.updateUser(user);
-        return "redirect:/";
+        return "redirect:/admin";
     }
 
     @GetMapping("/deleteUser")
@@ -81,6 +79,6 @@ public class AdminController {
     @PostMapping("/deleteUser")
     public String delete(@ModelAttribute("id") int id) {
         userService.deleteUser(id);
-        return "redirect:/";
+        return "redirect:/admin";
     }
 }
