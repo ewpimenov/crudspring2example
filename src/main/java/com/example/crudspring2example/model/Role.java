@@ -17,6 +17,11 @@ public class Role implements GrantedAuthority {
 
     public Role(){}
 
+    public Role(int id, String role) {
+        this.id = id;
+        this.role = role;
+    }
+
     public int getId() {
         return id;
     }
@@ -45,5 +50,4 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return getRole();
     }
-
 }

@@ -1,84 +1,85 @@
 package com.example.crudspring2example.controller;
 
+
+import com.example.crudspring2example.model.Role;
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.service.RoleService;
 import com.example.crudspring2example.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
-@Controller
+@RestController
 @RequestMapping("/admin")
 @Transactional
 public class AdminController {
-
-    private final RoleService roleService;
 
     private final PasswordEncoder passwordEncoder;
 
     private final UserService userService;
 
-    public AdminController(RoleService roleService, UserService userService, PasswordEncoder passwordEncoder) {
-        this.roleService = roleService;
-        this.userService = userService;
+    private final RoleService roleService;
+
+    public AdminController(PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
+        this.roleService = roleService;
     }
 
-    @GetMapping
-    public String adminPage(Model model, Principal principal) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("user", principal.getName());
-        model.addAttribute("roles", authentication.getAuthorities());
-        model.addAttribute("users", userService.getAllUsers());
-        return "/admin";
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<User> users() {
+        return userService.getAllUsers();
     }
 
-    @PostMapping("/addUser")
-    public String create(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
-        user.setRoles(roleService.getRolesByName(role));
+    @GetMapping(value = "{id}")
+    public ResponseEntity<User> get(@PathVariable(name = "id") int id) {
+        try {
+            User userDb = userService.getUser(id);
+            return new ResponseEntity<>(userDb, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("allRoles")
+    public List<Role> getAllRoles() {
+        return roleService.getAllRoles();
+    }
+
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.addUser(user);
-        return "redirect:/admin";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/updateUser")
-    public String updateForm(@RequestParam int id, Model model) {
-        model.addAttribute("user", userService.getUser(id));
-        model.addAttribute("roles", roleService.getAllRolesByName());
-        return "/updateUser";
-    }
+    @PutMapping(value = "{id}")
+    public User update(@PathVariable int id, @RequestBody User user) {
 
-    @PostMapping("/updateUser")
-    public String update(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
-
-        user.setRoles(roleService.getRolesByName(role));
-        User userFromDB = userService.getUser(user.getId());
+        User userFromDB = userService.getUser(id);
         String oldPassword = userFromDB.getPassword();
         if (!user.getPassword().equals(oldPassword)) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userService.updateUser(user);
         }
-        userService.updateUser(user);
-        return "redirect:/admin";
+        return userService.updateUser(user);
     }
 
-    @GetMapping("/deleteUser")
-    public String deleteUser(@RequestParam int id, Model model) {
-        model.addAttribute("user", userService.getUser(id));
-        return "/deleteUser";
-    }
-
-    @PostMapping("/deleteUser")
-    public String delete(@ModelAttribute("id") int id) {
-        userService.deleteUser(id);
-        return "redirect:/admin";
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+        try {
+            userService.deleteUser(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
