@@ -34,18 +34,28 @@ async function add() {
     addForm.onsubmit = async (e) => {
         e.preventDefault();
 
-        let response = await fetch(`http://localhost:8080/admin/allRoles`);
-        let jsonRole = await response.json();
-        let roleName = Array.from(jsonRole).map(name => name.role)
-        console.log(roleName)
+        /*  let response = await fetch(`http://localhost:8080/admin/allRoles`);
+          let jsonRole = await response.json();
+          let roleName = Array.from(jsonRole).map(name => name.role)
+          console.log(roleName)*/
 
-        let arrayRoles = Array.from(document.getElementById('newRoles').selectedOptions)
-            .map(id => id.value);
-        console.log(arrayRoles)
+        /*написать метод в скрипте, который просто будет работать почти также как метод, перерисовывающий всю таблицу,
+          но который будет брать данные нового юзера которые ты ввел и рисовать лишь одну строчку в таблице*/
+
+     /*   let arrayRoles = Array.from(document.getElementById('newRoles').selectedOptions)
+            .map(id => id.value)
+        console.log(arrayRoles)*/
+
+        let arrayRoles = document.getElementById("newRoles")
+        let options = ['ADMIN', 'USER'];
+
+        options.forEach(function (element, key) {
+            arrayRoles[key] = new Option(element, key, true)});
+            console.log(options)
 
         let newArrayObjectRoles = [];
-        for (let i = 0; i < arrayRoles.length; i++) {
-            newArrayObjectRoles.push({'id': arrayRoles[i]});
+        for (let i = 0; i < options.length; i++) {
+            newArrayObjectRoles.push({'id': options[i]});
             console.log(newArrayObjectRoles)
         }
 
@@ -57,19 +67,18 @@ async function add() {
             "password": document.getElementById('password').value,
             "roles": newArrayObjectRoles
         }
-        /// console.log(newUser)
-
+        console.log(newUser)
 
         await fetch(`http://localhost:8080/admin`, {
             method: "POST",
             body: JSON.stringify(newUser),
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json',
             }
         })
             .then((res) => res.json())
             .then((data) => getAllUsers(data));
+
 
         let triggerE1 = document.querySelector('a[href="#Users table"]')
         let tabTrigger = new bootstrap.Tab(triggerE1)

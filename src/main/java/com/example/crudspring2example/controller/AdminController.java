@@ -54,12 +54,11 @@ public class AdminController {
         return roleService.getAllRoles();
     }
 
-
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.addUser(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        User newUser = userService.addUser(user);
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @PutMapping(value = "{id}")
