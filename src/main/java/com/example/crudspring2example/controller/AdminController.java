@@ -16,7 +16,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
 @RestController
 @RequestMapping("/admin")
 @Transactional
@@ -40,7 +39,7 @@ public class AdminController {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<User> get(@PathVariable(name = "id") int id) {
+    public ResponseEntity<User> get(@PathVariable(name = "id") Integer id) {
         try {
             User userDb = userService.getUser(id);
             return new ResponseEntity<>(userDb, HttpStatus.OK);
@@ -62,7 +61,7 @@ public class AdminController {
     }
 
     @PutMapping(value = "{id}")
-    public User update(@PathVariable int id, @RequestBody User user) {
+    public User update(@PathVariable Integer id, @RequestBody User user) {
 
         User userFromDB = userService.getUser(id);
         String oldPassword = userFromDB.getPassword();
@@ -73,7 +72,7 @@ public class AdminController {
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         try {
             userService.deleteUser(id);
             return new ResponseEntity<>(HttpStatus.OK);

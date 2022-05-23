@@ -42,20 +42,13 @@ async function add() {
         /*написать метод в скрипте, который просто будет работать почти также как метод, перерисовывающий всю таблицу,
           но который будет брать данные нового юзера которые ты ввел и рисовать лишь одну строчку в таблице*/
 
-     /*   let arrayRoles = Array.from(document.getElementById('newRoles').selectedOptions)
+        let arrayRoles = Array.from(document.getElementById('newRoles').selectedOptions)
             .map(id => id.value)
-        console.log(arrayRoles)*/
-
-        let arrayRoles = document.getElementById("newRoles")
-        let options = ['ADMIN', 'USER'];
-
-        options.forEach(function (element, key) {
-            arrayRoles[key] = new Option(element, key, true)});
-            console.log(options)
+        console.log(arrayRoles)
 
         let newArrayObjectRoles = [];
-        for (let i = 0; i < options.length; i++) {
-            newArrayObjectRoles.push({'id': options[i]});
+        for (let i = 0; i < arrayRoles.length; i++) {
+            newArrayObjectRoles.push({'id': arrayRoles[i]});
             console.log(newArrayObjectRoles)
         }
 
@@ -79,7 +72,6 @@ async function add() {
             .then((res) => res.json())
             .then((data) => getAllUsers(data));
 
-
         let triggerE1 = document.querySelector('a[href="#Users table"]')
         let tabTrigger = new bootstrap.Tab(triggerE1)
         tabTrigger.show()
@@ -97,42 +89,45 @@ function editOpenModal(button) {
     for (let i = 0; i < userData.length; i++) {
         formInputs[i].setAttribute('value', userData[i])
     }
-
-    async function edit(event, id) {
-        event.preventDefault();
-
-        let editModalInputs = Array.from(document.querySelectorAll('.editModalForm'));
-        console.log(editModalInputs);
-
-        let formData = new FormData(document.querySelector('.editModalForm form'));
-        let editUserData = {
-            id: formData.get('id'),
-            firstName: formData.get('firstName'),
-            lastName: formData.get('lastName'),
-            age: formData.get('age'),
-            username: formData.get('username'),
-            password: formData.get('password'),
-            roles: formData.getAll('roles'),
-        }
-
-        fetch(`http://localhost:8080/admin/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(editUserData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(() => {
-                console.log('editRow');
-                $('#editModal').modal('hide')
-                let editRow = document.querySelector(`#userDataId-${id}`);
-
-            }).catch(err => {
-            console.error(err)
-        });
-    }
 }
 
+function edit() {
+    event.preventDefault();
+
+    let arrayEditRoles = Array.from(document.getElementById('editRoles').selectedOptions)
+        .map(id => id.value)
+    let newArrayEditRoles = [];
+    for (let i = 0; i < arrayEditRoles.length; i++) {
+        newArrayEditRoles.push({'id': arrayEditRoles[i]})
+    }
+    console.log(newArrayEditRoles)
+
+    let idUserEdit = document.getElementById('idEdit').value
+
+    const editUser = {
+        "id": document.getElementById("idEdit").value,
+        "lastName": document.getElementById('lastNameEdit').value,
+        "firstName": document.getElementById('firstNameEdit').value,
+        "age": document.getElementById('ageEdit').value,
+        "username": document.getElementById('usernameEdit').value,
+        "password": document.getElementById('passwordEdit').value,
+        "roles": newArrayEditRoles,
+    }
+    console.log(editUser)
+
+   fetch(`http://localhost:8080/admin/${idUserEdit}`, {
+        method: 'PUT',
+        body: JSON.stringify(editUser),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((res) => res.json())
+        .then((data) => getAllUsers(data))
+        .then(() => {
+            console.log('updated');
+            $('#editModal').modal('hide')
+        })
+}
 
 function delOpenModal(button) {
     let getUserRow = button.parentElement.parentElement
@@ -146,7 +141,6 @@ function delOpenModal(button) {
         formInputs[i].setAttribute('value', userData[i])
     }
 }
-
 
 async function del(event, id) {
     event.preventDefault();

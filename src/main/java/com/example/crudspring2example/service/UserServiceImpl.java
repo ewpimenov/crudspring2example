@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void deleteUser(int id) {
+    public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
 
@@ -48,8 +48,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public User getUser(int id) {
-        return userRepository.getOne(id);
+    public User getUser(Integer id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
