@@ -3,29 +3,32 @@ fetch('http://localhost:8080/admin').then(
         res.json().then(
             data => {
                 if (data.length > 0) {
-                    data.forEach((u) => {
-                        getAllUsers(u);
-                        //   console.log(u)
-                    })
+                    getAllUsers(data);
                 }
             })
     }
 )
 
 function getAllUsers(u) {
-
-    let temp = "";
-    temp += `<tr id = 'userDataId-${u.id}'>`;
-    temp += "<td class='userData'>" + u.id + "</td>";
-    temp += "<td class='userData'>" + u.firstName + "</td>";
-    temp += "<td class='userData'>" + u.lastName + "</td>";
-    temp += "<td class='userData'>" + u.age + "</td>";
-    temp += "<td class='userData'>" + u.username + "</td>";
-    temp += "<td>" + u.roles.map(u => u.role) + "</td>";
-    temp += "<td> <button class=\"btn btn-info\" data-target=\"#editModal\" id=\"#updateForm\" onclick='editOpenModal(this)' data-toggle=\"modal\" type=\"button\">Edit</button></td>";
-    temp += "<td> <button class=\"btn btn-danger\" data-target=\"#deleteModal\" onclick='delOpenModal(this)' data-toggle=\"modal\" type=\"button\">Delete</button></td></tr>";
-
-    document.getElementById("data").insertAdjacentHTML('beforeend', temp);
+    fetch('http://localhost:8080/admin').then(
+        res => {
+            res.json().then(
+                data => {
+                    let temp = "";
+                    data.forEach((u) => {
+                        temp += `<tr id = 'userDataId-${u.id}'>`;
+                        temp += "<td class='userData'>" + u.id + "</td>";
+                        temp += "<td class='userData'>" + u.firstName + "</td>";
+                        temp += "<td class='userData'>" + u.lastName + "</td>";
+                        temp += "<td class='userData'>" + u.age + "</td>";
+                        temp += "<td class='userData'>" + u.username + "</td>";
+                        temp += "<td>" + u.roles.map(u => u.role) + "</td>";
+                        temp += "<td> <button class=\"btn btn-info\" data-target=\"#editModal\" id=\"#updateForm\" onclick='editOpenModal(this)' data-toggle=\"modal\" type=\"button\">Edit</button></td>";
+                        temp += "<td> <button class=\"btn btn-danger\" data-target=\"#deleteModal\" onclick='delOpenModal(this)' data-toggle=\"modal\" type=\"button\">Delete</button></td></tr>";
+                    })
+                    document.getElementById("data").innerHTML = temp;
+                })
+        })
 }
 
 async function add() {
@@ -33,14 +36,6 @@ async function add() {
 
     addForm.onsubmit = async (e) => {
         e.preventDefault();
-
-        /*  let response = await fetch(`http://localhost:8080/admin/allRoles`);
-          let jsonRole = await response.json();
-          let roleName = Array.from(jsonRole).map(name => name.role)
-          console.log(roleName)*/
-
-        /*написать метод в скрипте, который просто будет работать почти также как метод, перерисовывающий всю таблицу,
-          но который будет брать данные нового юзера которые ты ввел и рисовать лишь одну строчку в таблице*/
 
         let arrayRoles = Array.from(document.getElementById('newRoles').selectedOptions)
             .map(id => id.value)
@@ -115,7 +110,7 @@ function edit() {
     }
     console.log(editUser)
 
-   fetch(`http://localhost:8080/admin/${idUserEdit}`, {
+    fetch(`http://localhost:8080/admin/${idUserEdit}`, {
         method: 'PUT',
         body: JSON.stringify(editUser),
         headers: {
