@@ -1,6 +1,7 @@
 package com.example.crudspring2example.service;
 
 import com.example.crudspring2example.model.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -18,4 +19,5 @@ public interface UserService {
 
     User findByUsername(String username);
 
+    UserDetails getByUsername(String name);
 }

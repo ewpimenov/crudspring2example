@@ -53,7 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login")
                 .and().csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/").authenticated();
+                 .antMatchers("/").authenticated()
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/user/**").access("hasAnyAuthority('ADMIN','USER')")
+                .anyRequest().authenticated();
+
     }
 
     @Bean

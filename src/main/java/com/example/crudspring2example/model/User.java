@@ -1,8 +1,5 @@
 package com.example.crudspring2example.model;
 
-
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -135,4 +132,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

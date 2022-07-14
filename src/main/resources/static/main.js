@@ -9,11 +9,16 @@ fetch('http://localhost:8080/admin').then(
     }
 )
 
+
+
+
+
 function getAllUsers(u) {
     fetch('http://localhost:8080/admin').then(
         res => {
             res.json().then(
                 data => {
+                    console.log(data)
                     let temp = "";
                     data.forEach((u) => {
                         temp += `<tr id = 'userDataId-${u.id}'>`;
@@ -159,4 +164,15 @@ async function del(event, id) {
     }
 }
 
+//отображение имени текущего пользователя в верхней строчке таблицы
+fetch('http://localhost:8080/admin/adminNameRole')
+    .then(response => response.json())
+    .then((data) => {
+        document.getElementById('currentUser').innerHTML = data.username;
+        document.getElementById('currentRole').innerHTML = data.roles.map(v => v.role);
+        console.log(data)
+
+    })
+    .catch(err => console.log(err)
+    )
 

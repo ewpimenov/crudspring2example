@@ -1,6 +1,5 @@
 package com.example.crudspring2example.controller;
 
-
 import com.example.crudspring2example.model.Role;
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.service.RoleService;
@@ -8,11 +7,16 @@ import com.example.crudspring2example.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -80,4 +84,10 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping(value = "/adminNameRole")
+    public UserDetails getCurrentUserAndRoles(Authentication authentication) throws UsernameNotFoundException {
+        return userService.getByUsername(authentication.getName());
+    }
 }
+
