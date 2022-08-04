@@ -19,16 +19,25 @@
 </head>
 
 <form class="float-left" th:method="post" th:object="${user}">
-    <nav class="navbar navbar-dark bg-company-red bg-dark justify-content-end">
-        <div class="text-white">
-            Name:
-            <a th:text="${user}"></a>
-            With roles:
-            <tr th:each="role : ${roles}"
-                th:text="${role.getRole()} + ' '"></td>
-            </tr>
-            <a class="navbar-brand" th:href="@{/logout}">Logout</a>
-        </div>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item col-sm-3">
+                <a class="navbar-brand nav text-white" th:text="${user}"></a>
+            </li>
+            <li class="nav-item">
+                <a class="navbar-brand nav text-white" >with roles:</a>
+            </li>
+            <li class="nav-item">
+                <a class="navbar-brand nav text-white"  th:each="role : ${roles}"
+                   th:text="${role.getRole()} + ' '">
+                </a>
+            </li>
+        </ul>
+        <ul class="nav justify-content-end col-sm-10">
+            <li class="nav-item text-nowrap">
+                <a class="nav text-white" th:href="@{/logout}" href="#">Logout</a>
+            </li>
+        </ul>
     </nav>
 </form>
 <form>
@@ -55,8 +64,9 @@
                                         <thead>
                                         <tr>
                                             <th scope="col">ID</th>
-                                            <th scope="col">Name</th>
+                                            <th scope="col">First Name</th>
                                             <th scope="col">Last Name</th>
+                                            <th scope="col">Age</th>
                                             <th scope="col">Username</th>
                                             <th scope="col">Role</th>
                                         </tr>
@@ -64,7 +74,8 @@
                                         <tbody>
                                         <tr th:each="user : ${users}">
                                             <td th:text="${user.id}"></td>
-                                            <td th:text="${user.name}"></td>
+                                            <td th:text="${user.firstName}"></td>
+                                            <td th:text="${user.age}"></td>
                                             <td th:text="${user.lastName}"></td>
                                             <td th:text="${user.username}"></td>
                                             <td>

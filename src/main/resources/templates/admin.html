@@ -13,39 +13,51 @@
 
 </head>
 <script>
-    function fillingEditModal(id, name, lastName, username, password) {
+    function fillingEditModal(id, firstName, lastName, age, username, password) {
 
         $("#modal-id").val(id);
-        $("#modal-name").val(name);
+        $("#modal-name").val(firstName);
         $("#modal-lastName").val(lastName);
+        $("#modal-age").val(age);
         $("#modal-username").val(username);
         $("#modal-password").val(password);
     }
 
-    function fillingDeleteModal(id, name, lastName, username, password) {
+    function fillingDeleteModal(id, firstName, lastName, age, username, password) {
 
-        $("#modal-myId").val(id);
-        $("#modal-myName").val(name);
-        $("#modal-myLastName").val(lastName);
-        $("#modal-myUsername").val(username);
-        $("#modal-myPassword").val(password);
+        $("#modal-id").val(id);
+        $("#modal-name").val(firstName);
+        $("#modal-lastName").val(lastName);
+        $("#modal-age").val(age);
+        $("#modal-username").val(username);
+        $("#modal-password").val(password);
     }
 
 </script>
 
 <body>
 <form th:method="post" th:object="${user}">
-    <nav class="navbar navbar-dark bg-company-red bg-dark justify-content-end">
-        <div style="float:right" class="text-white">
-            Name:
-            <a th:text="${user}"></a>
-            With roles:
-            <tr th:each="role : ${roles}"
-                th:text="${role.getRole()} + ' '"></td>
-            </tr>
-            <a class="navbar-brand" th:href="@{/logout}">Logout</a>
-        </div>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item col-sm-3">
+                <a class="navbar-brand nav text-white" th:text="${user}"></a>
+            </li>
+            <li class="nav-item">
+                <a class="navbar-brand nav text-white" >with roles:</a>
+            </li>
+            <li class="nav-item">
+                <a class="navbar-brand nav text-white"  th:each="role : ${roles}"
+                                                           th:text="${role.getRole()} + ' '">
+             </a>
+            </li>
+        </ul>
+        <ul class="nav justify-content-end col-sm-10">
+            <li class="nav-item text-nowrap">
+                <a class="nav text-white" th:href="@{/logout}" href="#">Logout</a>
+            </li>
+        </ul>
     </nav>
+
 </form>
 
 <form>
@@ -54,7 +66,7 @@
             <div class="col-lg-2 col-md-8">
                 <div class="d-grid gap-0">
                     <button type="button" class="btn btn-primary btn-sm">Admin</button>
-                    <a href="#" th:href="@{/user}" class="btn btn-primary btn-sm active" role="button"
+                    <a href="#" th:href="@{/user}" class="btn btn-primary btn-sm" role="button"
                        aria-pressed="true">User</a>
                 </div>
             </div>
@@ -80,8 +92,9 @@
                                         <thead>
                                         <tr>
                                             <th scope="col">ID</th>
-                                            <th scope="col">Name</th>
+                                            <th scope="col">First Name</th>
                                             <th scope="col">Last Name</th>
+                                            <th scope="col">Age</th>
                                             <th scope="col">Username</th>
                                             <th scope="col">Role</th>
                                             <th scope="col">Edit</th>
@@ -92,34 +105,39 @@
                                         <tbody>
                                         <tr th:each="user : ${users}">
                                             <td th:text="${user.id}"></td>
-                                            <td th:text="${user.name}"></td>
+                                            <td th:text="${user.firstName}"></td>
                                             <td th:text="${user.lastName}"></td>
+                                            <td th:text="${user.age}"></td>
                                             <td th:text="${user.username}"></td>
                                             <td>
                                                 <a th:each="role :${user.getRoles()}" th:text="${role.getRole()} + ' '"></a>
                                             </td>
                                             <td><a th:data-id="${user.id}"
-                                                   th:data-name="${user.name}"
+                                                   th:data-firstName="${user.firstName}"
                                                    th:data-lastName="${user.lastName}"
+                                                   th:data-age="${user.age}"
                                                    th:data-username="${user.username}"
                                                    th:data-password="${user.password}"
                                                    onclick="fillingEditModal(this.getAttribute('data-id'),
-                                                   this.getAttribute('data-name'),
+                                                   this.getAttribute('data-firstName'),
                                                    this.getAttribute('data-lastName'),
+                                                   this.getAttribute('data-age'),
                                                    this.getAttribute('data-username'),
                                                    this.getAttribute('data-password'));"
                                                    class="btn btn-info"
                                                    data-toggle="modal" data-target="#editModal">Edit</a>
                                             </td>
                                             <td><a th:data-id="${user.id}"
-                                                   th:data-name="${user.name}"
+                                                   th:data-firstName="${user.firstName}"
                                                    th:data-lastName="${user.lastName}"
+                                                   th:data-age="${user.age}"
                                                    th:data-username="${user.username}"
                                                    th:data-password="${user.password}"
 
                                                    onclick="fillingDeleteModal(this.getAttribute('data-id'),
-                                                   this.getAttribute('data-name'),
+                                                   this.getAttribute('data-firstName'),
                                                    this.getAttribute('data-lastName'),
+                                                   this.getAttribute('data-age'),
                                                    this.getAttribute('data-username'),
                                                    this.getAttribute('data-password'));"
                                                    class="btn btn-danger"
@@ -149,16 +167,22 @@
                                                    id="modal-id">
                                         </div>
                                         <div class="form-group text-center">
-                                            <label for="modal-name">Name</label><br>
+                                            <label for="modal-firstName">First Name</label><br>
                                             <input type="text" class="form-control p-1 mb-2 bg-warning text-light"
-                                                   th:value="*{name}" name="name"
-                                                   id="modal-name">
+                                                   th:value="*{firstName}" name="firstName"
+                                                   id="modal-firstName">
                                         </div>
                                         <div class="form-group text-center">
-                                            <label for="modal-lastName">LastName</label><br>
+                                            <label for="modal-lastName">Last Name</label><br>
                                             <input type="text" class="form-control p-1 mb-2 bg-warning text-light"
                                                    th:value="*{lastName}"
                                                    name="lastName" id="modal-lastName"/>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <label for="modal-lastName">Age</label><br>
+                                            <input type="text" class="form-control p-1 mb-2 bg-warning text-light"
+                                                   th:value="*{age}"
+                                                   name="lastName" id="modal-age"/>
                                         </div>
                                         <div class="form-group text-center">
                                             <label for="modal-username">Username</label><br>
@@ -207,15 +231,20 @@
                                                    id="modal-myId">
                                         </div>
                                         <div class="form-group text-center">
-                                            <label for="modal-name">Name</label><br>
-                                            <input type="text" class="form-control" th:value="*{name}" name="name"
+                                            <label for="modal-firstName">First Name</label><br>
+                                            <input type="text" class="form-control" th:value="*{firstName}" name="firstName"
                                                    readonly
-                                                   id="modal-myName">
+                                                   id="modal-myFirstName">
                                         </div>
                                         <div class="form-group text-center">
-                                            <label for="modal-lastName">LastName</label><br>
+                                            <label for="modal-lastName">Last Name</label><br>
                                             <input type="text" class="form-control" th:value="*{lastName}" readonly
                                                    name="lastName" id="modal-myLastName"/>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <label for="modal-age">Age</label><br>
+                                            <input type="text" class="form-control" th:value="*{age}" readonly
+                                                   name="lastName" id="modal-myAge"/>
                                         </div>
                                         <div class="form-group text-center">
                                             <label for="modal-username">Username</label><br>
@@ -238,7 +267,7 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
                                         </button>
-                                        <button type="submit" class="btn btn-primary">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -257,12 +286,16 @@
                                 <table class="table table-striped">
                                     <form th:action="@{/admin/addUser}" th:method="post">
                                         <div class="form-group text-center">
-                                            <label for="name">Name</label><br>
-                                            <input type="text" name="name" id="name"/>
+                                            <label for="firstName">First Name</label><br>
+                                            <input type="text" name="firstName" id="firstName"/>
                                         </div>
                                         <div class="form-group text-center">
-                                            <label for="lastName">LastName</label><br>
+                                            <label for="lastName">Last Name</label><br>
                                             <input type="text" name="lastName" id="lastName"/>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <label for="age">Age</label><br>
+                                            <input type="text" name="age" id="age"/>
                                         </div>
                                         <div class="form-group text-center">
                                             <label for="username">Username</label><br>

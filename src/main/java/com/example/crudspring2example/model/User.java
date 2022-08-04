@@ -16,11 +16,14 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "first_name")
+    private String firstName;
 
     @Column(name = "lastName")
     private String lastName;
+
+    @Column(name = "age")
+    private int age;
 
     @Column(name = "username")
     private String username;
@@ -36,9 +39,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String lastName, String username, String password) {
-        this.name = name;
+    public User(String firstName, String lastName, int age, String username, String password) {
+        this.firstName = firstName;
         this.lastName = lastName;
+        this.age = age;
         this.username = username;
         this.password = password;
     }
@@ -57,12 +61,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -80,6 +84,14 @@ public class User implements UserDetails {
 
     public String getLasName() {
         return lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public void setUsername(String username) {
@@ -132,8 +144,9 @@ public class User implements UserDetails {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", age=" + age +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
