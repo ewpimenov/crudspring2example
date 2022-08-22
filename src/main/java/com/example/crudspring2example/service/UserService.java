@@ -17,7 +17,4 @@ public interface UserService {
     void updateUser(User user);
 
     User getUser(int id);
-
-    User findByUsername(String username);
-
 }

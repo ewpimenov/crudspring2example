@@ -1,4 +1,5 @@
 package com.example.crudspring2example.service;
+
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.repository.UserRepository;
 
@@ -28,13 +29,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void addUser(User user) {
-    userRepository.saveAndFlush(user);
+        userRepository.saveAndFlush(user);
     }
 
     @Override
     @Transactional
     public void deleteUser(int id) {
-       userRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     @Override
@@ -51,16 +52,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        return new org.springframework.security.core.userdetails.User(user.getName(),
-                user.getPassword(), user.getAuthorities());
+        return userRepository.getUserByUsername(username);
     }
 }
 
