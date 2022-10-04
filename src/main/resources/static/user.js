@@ -29,10 +29,8 @@ function getCurrentUser(u) {
 fetch('http://localhost:8080/user/userNameRole')
     .then(response => response.json())
     .then((data) => {
-        document.getElementById('currUser').innerHTML = data.username;
-        document.getElementById('currRole').innerHTML = data.roles.map(u => u.role);
-        console.log(data)
-
-    })
-    .catch(err => console.log(err)
+            document.getElementById('currUser').innerHTML = data.username;
+            document.getElementById('currRole').innerHTML = data.roles.map(u => u.role);
+            console.log(data)
+        }
     )

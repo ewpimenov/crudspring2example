@@ -25,24 +25,27 @@ import java.util.NoSuchElementException;
 @Transactional
 public class AdminController {
 
-    private final PasswordEncoder passwordEncoder;
-
     private final UserService userService;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final RoleService roleService;
 
-    public AdminController(PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
-        this.passwordEncoder = passwordEncoder;
+    public AdminController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> users() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> users() {
+        List<User> users = userService.getAllUsers();
+        return users != null && !users.isEmpty()
+                ? new ResponseEntity<>(users, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping("{id}")
     public ResponseEntity<User> get(@PathVariable(name = "id") Integer id) {
         try {
             User userDb = userService.getUser(id);
@@ -52,21 +55,19 @@ public class AdminController {
         }
     }
 
-    @GetMapping("allRoles")
-    public List<Role> getAllRoles() {
-        return roleService.getAllRoles();
-    }
-
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User newUser = userService.addUser(user);
-        return new ResponseEntity<>(newUser, HttpStatus.OK);
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User newUser = userService.addUser(user);
+            return new ResponseEntity<>(newUser, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping(value = "{id}")
+    @PutMapping("{id}")
     public User update(@PathVariable Integer id, @RequestBody User user) {
-
         User userFromDB = userService.getUser(id);
         String oldPassword = userFromDB.getPassword();
         if (!user.getPassword().equals(oldPassword)) {
@@ -75,8 +76,8 @@ public class AdminController {
         return userService.updateUser(user);
     }
 
-    @DeleteMapping(value = "{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Integer id) {
         try {
             userService.deleteUser(id);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -85,9 +86,13 @@ public class AdminController {
         }
     }
 
-    @GetMapping(value = "/adminNameRole")
-    public UserDetails getCurrentUserAndRoles(Authentication authentication) throws UsernameNotFoundException {
-        return userService.getByUsername(authentication.getName());
+    @GetMapping("/adminNameRole")
+    public ResponseEntity<UserDetails> getCurrentUserAndRoles(Authentication authentication) throws UsernameNotFoundException {
+        UserDetails userDetails = userService.getByUsername(authentication.getName());
+        return userDetails != null
+                ? new ResponseEntity<>(userDetails, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 }
 

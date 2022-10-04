@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,13 +14,16 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_Name")
     private String lastName;
+
+    @Column(name = "age")
+    private int age;
 
     @Column(name = "username")
     private String username;
@@ -27,34 +31,33 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "age")
-    private int age;
-
-    @ManyToMany (fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     public User() {
     }
 
-    public User(Integer id, String firstName, String lastName, String username, String password) {
+    public User(String firstName, String lastName, int age, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.age = age;
         this.username = username;
         this.password = password;
     }
 
-    public User(Integer id, List<Role> roles) {
+    public User(int id, List<Role> roles) {
         this.id = id;
         this.roles = roles;
     }
 
-    public Integer getId() {
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -74,12 +77,13 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getLasName() {
+        return lastName;
     }
 
     public int getAge() {
@@ -90,17 +94,8 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    public List<Role> getRoles() {
-        return this.roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -133,4 +128,28 @@ public class User implements UserDetails {
         return true;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }

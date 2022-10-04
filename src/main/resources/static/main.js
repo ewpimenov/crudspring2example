@@ -9,10 +9,6 @@ fetch('http://localhost:8080/admin').then(
     }
 )
 
-
-
-
-
 function getAllUsers(u) {
     fetch('http://localhost:8080/admin').then(
         res => {
@@ -27,12 +23,13 @@ function getAllUsers(u) {
                         temp += "<td class='userData'>" + u.lastName + "</td>";
                         temp += "<td class='userData'>" + u.age + "</td>";
                         temp += "<td class='userData'>" + u.username + "</td>";
-                        temp += "<td>" + u.roles.map(u => u.role) + "</td>";
+                        temp += "<td class='userRole'>" + u.roles.map(u => u.role) + "</td>";
                         temp += "<td> <button class=\"btn btn-info\" data-target=\"#editModal\" id=\"#updateForm\" onclick='editOpenModal(this)' data-toggle=\"modal\" type=\"button\">Edit</button></td>";
                         temp += "<td> <button class=\"btn btn-danger\" data-target=\"#deleteModal\" onclick='delOpenModal(this)' data-toggle=\"modal\" type=\"button\">Delete</button></td></tr>";
                     })
                     document.getElementById("data").innerHTML = temp;
-                })
+                }
+            )
         })
 }
 
@@ -60,7 +57,6 @@ async function add() {
             "password": document.getElementById('password').value,
             "roles": newArrayObjectRoles
         }
-        console.log(newUser)
 
         await fetch(`http://localhost:8080/admin`, {
             method: "POST",
@@ -89,18 +85,41 @@ function editOpenModal(button) {
     for (let i = 0; i < userData.length; i++) {
         formInputs[i].setAttribute('value', userData[i])
     }
+
 }
 
 function edit() {
     event.preventDefault();
 
-    let arrayEditRoles = Array.from(document.getElementById('editRoles').selectedOptions)
+   let arrayEditRoles = Array.from(document.getElementById('editRoles').selectedOptions)
         .map(id => id.value)
     let newArrayEditRoles = [];
     for (let i = 0; i < arrayEditRoles.length; i++) {
         newArrayEditRoles.push({'id': arrayEditRoles[i]})
     }
     console.log(newArrayEditRoles)
+
+    const sb = document.querySelector('#editRoles');
+    console.log(sb.value)
+
+   /* let optionsToSelect = Array.from(document.querySelector('.userRole'))
+    let select = document.getElementById( 'editRoles' );
+
+    for ( let i = 0, l = select.options.length, o; i < l; i++ )
+    {
+        o = select.options[i];
+        if ( optionsToSelect.indexOf( o.text ) != -1 )
+        {
+            o.selected = true;
+        }
+
+    }*/
+
+    /*не надо ничего создавать динамически. Сделай хотя бы со статическим набором ролей в селекте
+    а по жсону смотри какие роли сделать активными*/
+
+    //у тебя есть стандартный набор ролей
+    //тебе надо из json пользователя понять, какие роли в форме сделать отмеченными
 
     let idUserEdit = document.getElementById('idEdit').value
 
@@ -111,8 +130,9 @@ function edit() {
         "age": document.getElementById('ageEdit').value,
         "username": document.getElementById('usernameEdit').value,
         "password": document.getElementById('passwordEdit').value,
-        "roles": newArrayEditRoles,
+        "roles": Array.from(document.querySelector('.userRole'))
     }
+
     console.log(editUser)
 
     fetch(`http://localhost:8080/admin/${idUserEdit}`, {
@@ -128,6 +148,7 @@ function edit() {
             $('#editModal').modal('hide')
         })
 }
+
 
 function delOpenModal(button) {
     let getUserRow = button.parentElement.parentElement
@@ -164,15 +185,18 @@ async function del(event, id) {
     }
 }
 
-//отображение имени текущего пользователя в верхней строчке таблицы
 fetch('http://localhost:8080/admin/adminNameRole')
     .then(response => response.json())
     .then((data) => {
         document.getElementById('currentUser').innerHTML = data.username;
         document.getElementById('currentRole').innerHTML = data.roles.map(v => v.role);
-        console.log(data)
 
     })
     .catch(err => console.log(err)
     )
+
+
+
+
+
 

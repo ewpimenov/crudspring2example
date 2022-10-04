@@ -17,7 +17,5 @@ public interface UserService {
 
     User getUser(Integer id);
 
-    User findByUsername(String username);
-
     UserDetails getByUsername(String name);
 }
