@@ -41,7 +41,7 @@ public class AdminController {
     @PostMapping("/addUser")
     public String create(@ModelAttribute("user") User user) {
         user.setRoles(roleService.getAllRolesByName());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userService.addUser(user);
         return "redirect:/";
     }
@@ -62,12 +62,6 @@ public class AdminController {
     @PostMapping("/updateUser")
     public String update(@ModelAttribute("user") User user, @RequestParam("role") String[] role) {
         user.setRoles(roleService.getRolesByName(role));
-        User userFromDB = userService.getUser(user.getId());
-        String oldPassword = userFromDB.getPassword();
-        if (!user.getPassword().equals(oldPassword)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userService.updateUser(user);
-        }
         userService.updateUser(user);
         return "redirect:/";
     }
