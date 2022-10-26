@@ -1,5 +1,4 @@
 package com.example.crudspring2example.repository;
-
 import com.example.crudspring2example.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

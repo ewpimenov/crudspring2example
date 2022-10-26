@@ -1,5 +1,4 @@
 package com.example.crudspring2example.controller;
-
 import com.example.crudspring2example.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;

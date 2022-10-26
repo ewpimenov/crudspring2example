@@ -1,7 +1,5 @@
 package com.example.crudspring2example.model;
-
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 
 @Entity
