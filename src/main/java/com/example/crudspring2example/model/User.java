@@ -2,7 +2,6 @@ package com.example.crudspring2example.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private List<Role> roles = new ArrayList<>();
+    private List<Role> roles;
 
     public User() {
     }

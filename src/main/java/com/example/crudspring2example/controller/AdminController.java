@@ -1,4 +1,5 @@
 package com.example.crudspring2example.controller;
+
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -53,15 +54,8 @@ public class AdminController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<User> update(@PathVariable Integer id, @RequestBody User user) {
-        User userFromDB = userService.getUser(id);
-        String oldPassword = userFromDB.getPassword();
-        if (!user.getPassword().equals(oldPassword)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return new ResponseEntity<>(userService.updateUser(user), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<User> update(@RequestBody User user) {
+        return new ResponseEntity<>(userService.updateUser(user), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
@@ -73,9 +67,6 @@ public class AdminController {
     @GetMapping("/adminNameRole")
     public ResponseEntity<UserDetails> getCurrentUserAndRoles(Authentication authentication) {
         UserDetails userDetails = userService.getByUsername(authentication.getName());
-        return userDetails != null
-                ? new ResponseEntity<>(userDetails, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userDetails, HttpStatus.OK);
     }
 }
-

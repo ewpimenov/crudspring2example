@@ -1,4 +1,5 @@
 package com.example.crudspring2example.service;
+
 import com.example.crudspring2example.model.User;
 import com.example.crudspring2example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 
@@ -48,7 +50,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public User updateUser(User user) {
-        userRepository.saveAndFlush(user);
+        User userFromDB = userRepository.getOne(user.getId());
+        String oldPassword = userFromDB.getPassword();
+        if (!user.getPassword().equals(oldPassword)) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.saveAndFlush(user);
+        }
         return user;
     }
 
