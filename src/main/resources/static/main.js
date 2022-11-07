@@ -8,12 +8,13 @@ fetch('http://localhost:8080/admin').then(
             })
     }
 )
-
+let allUsers;
 function getAllUsers(u) {
     fetch('http://localhost:8080/admin').then(
         res => {
             res.json().then(
                 data => {
+                    allUsers=data;
                     let temp = "";
                     data.forEach((u) => {
                         temp += `<tr id = 'userDataId-${u.id}'>`;
@@ -22,9 +23,12 @@ function getAllUsers(u) {
                         temp += "<td class='userData'>" + u.lastName + "</td>";
                         temp += "<td class='userData'>" + u.age + "</td>";
                         temp += "<td class='userData'>" + u.username + "</td>";
-                        temp += "<td class='userRole'>" + u.roles.map(u => u.role) + "</td>";
-                        temp += "<td> <button class=\"btn btn-info\" data-target=\"#editModal\" id=\"#updateForm\" onclick='editOpenModal(this)' data-toggle=\"modal\" type=\"button\">Edit</button></td>";
-                        temp += "<td> <button class=\"btn btn-danger\" data-target=\"#deleteModal\" onclick='delOpenModal(this)' data-toggle=\"modal\" type=\"button\">Delete</button></td></tr>";
+                        temp += "<td hidden class='userData'>" + u.password + "</td>";
+                        temp += "<td>" + u.roles.map(u => u.role) + "</td>";
+                        temp += "<td> <button class=\"btn btn-info\" data-target=\"#editModal\" id=\"#updateForm\" " +
+                            "onclick='editOpenModal(this)' data-toggle=\"modal\" type=\"button\">Edit</button></td>";
+                        temp += "<td> <button class=\"btn btn-danger\" data-target=\"#deleteModal\" " +
+                            "onclick='delOpenModal(this)' data-toggle=\"modal\" type=\"button\">Delete</button></td></tr>";
                     })
                     document.getElementById("data").innerHTML = temp;
                 }
@@ -74,13 +78,16 @@ async function add() {
 function editOpenModal(button) {
 
     let editUserRow = button.parentElement.parentElement
-
     let editRow = Array.from(editUserRow.querySelectorAll('.userData'));
+    console.log(editRow)
+
     let userData = [];
     let formInputs = Array.from(editModal.querySelectorAll('input'));
     for (let node of editRow) {
         userData.push(node.textContent)
     }
+    console.log(userData)
+
     for (let i = 0; i < userData.length; i++) {
         formInputs[i].setAttribute('value', userData[i])
     }
